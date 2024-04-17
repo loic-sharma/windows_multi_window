@@ -1,5 +1,6 @@
-#include <flutter/dart_project.h>
-#include <flutter/flutter_view_controller.h>
+#include <algorithm>
+#include <flutter_windows.h>
+#include <iterator>
 #include <windows.h>
 
 #include "flutter_window.h"
@@ -17,20 +18,36 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   // plugins.
   ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 
-  flutter::DartProject project(L"data");
-
   std::vector<std::string> command_line_arguments =
-      GetCommandLineArguments();
+    GetCommandLineArguments();
+  std::vector<const char*> entrypoint_argv;
+  std::transform(
+    command_line_arguments.begin(), command_line_arguments.end(),
+    std::back_inserter(entrypoint_argv),
+    [](const std::string& arg) -> const char* { return arg.c_str(); });
+  FlutterDesktopEngineProperties engine_properties{
+    /*assets_path=*/L"data\\flutter_assets",
+    /*icu_data_path=*/L"data\\icudtl.dat",
+    /*aot_library_path=*/L"data\\app.so",
+    /*dart_entrypoint=*/nullptr,
+    /*dart_entrypoint_argc=*/static_cast<int>(entrypoint_argv.size()),
+    /*dart_entrypoint_argv=*/entrypoint_argv.empty() ? nullptr : entrypoint_argv.data(),
+  };
 
-  project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
+  FlutterDesktopEngineRef engine{FlutterDesktopEngineCreate(&engine_properties)};
 
-  FlutterWindow window(project);
-  Win32Window::Point origin(10, 10);
-  Win32Window::Size size(1280, 720);
-  if (!window.Create(L"windows_c_multi_window", origin, size)) {
+  // RegisterPlugins(engine.get());
+
+  Win32Window::Point origin1{10, 10};
+  Win32Window::Point origin2{50, 50};
+  Win32Window::Size size{1280, 720};
+
+  FlutterWindow window1{engine};
+  FlutterWindow window2{engine};
+  if (!window1.Create(L"Window #1", origin1, size)
+    || !window2.Create(L"Window #2", origin2, size)) {
     return EXIT_FAILURE;
   }
-  window.SetQuitOnClose(true);
 
   ::MSG msg;
   while (::GetMessage(&msg, nullptr, 0, 0)) {

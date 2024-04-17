@@ -1,16 +1,9 @@
-# windows_c_multi_window
+# Windows multi-window sample
 
-A new Flutter project.
+This repository contains an experimental Flutter Windows app that launches
+multiple windows. This sample requires
+[Flutter's `master` channel](https://docs.flutter.dev/release/upgrade#changing-channels).
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This sample is aspirational, may not actually work, may be outdated, and/or have
+other issues. This sample links against experimental Flutter Windows APIs that
+may break at any time. DO NOT DEPEND ON ANYTHING IN THIS REPOSITORY.
